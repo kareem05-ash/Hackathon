@@ -54,6 +54,7 @@ wlf*
 *.bak
 *.old
 *.DS_Store
+*.pptx
 Thumbs.do
 
 # ========== Misc Output ==========
