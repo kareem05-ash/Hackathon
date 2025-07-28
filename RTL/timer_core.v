@@ -10,18 +10,16 @@ module timer_core
     input wire i_clk,                       // divided clk signal
     input wire i_rst,                       // async. active-high reset
     input wire i_timer_core_en,             // ~ctrl[1] & ctrl[2]
-    // input wire i_enable,                    // ctrl [2] timer mode enable
     input wire i_cont,                      // ctrl [3] continuous mode
     input wire i_irq_clear,                 // ctrl [5] (interrupt clear)
     input wire [15:0] i_period,             // reg period
     // Outputs 
     output reg o_irq                        // Interrupt outupt
-    // output reg o_irq                        // pulse output for interrupts
 );
 
     reg [15:0] count;                       // Internal main counter
     reg [15:0] period_sync;                 // Syncronous poeriod reg
-    reg oneshot = 0;                             // A register for (cont vs one-shot) handling
+    reg one_shot = 0;                             // A register for (cont vs one-shot) handling
 
     // Syncronization of i_period reg
     always@(posedge i_clk)
@@ -33,8 +31,7 @@ module timer_core
             if(i_rst || !i_timer_core_en)       // mode stays on reset while not enabled
                 begin
                     o_irq <= 0;         // default value
-                    o_irq <= 0;         // default value waits for interrupt pulse
-                    oneshot <= 0;       // 
+                    one_shot <= 0;      // reg handles one-shot vs cont logic
                     count <= 16'd0;     // reset the counter
                 end
             else    
@@ -43,17 +40,17 @@ module timer_core
                     if(i_irq_clear) 
                         begin
                             o_irq <= 0;     // dafault value
-                            oneshot <= 0;   // to start new time cycle
+                            one_shot <= 0;  // to start new time cycle
                         end
                     // start counting logic
-                    if(i_timer_core_en && !oneshot)
+                    if(i_timer_core_en && !one_shot)
                         begin
                             if(count >= period_sync)
                                 begin
                                     o_irq <= 1;     // interrupt flag
                                     count <= 16'd0; // reset counter
                                     if(!i_cont)
-                                        oneshot <= 1;
+                                        one_shot <= 1;
                                 end
                             else
                                 // increment count if < period_sync
