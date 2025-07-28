@@ -4,6 +4,7 @@
 // 01002321067
 // github.com/kareem05-ash
 ///////////////////////////////////////////////////////////
+`timescale 1ns/1ps
 module clock_down
 (
     // inputs
