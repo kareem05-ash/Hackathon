@@ -4,10 +4,10 @@ module top_pwm (
     input i_wb_cyc,
     input i_wb_stb,
     input i_wb_we,
-    input i_wb_adr,
-    input i_wb_data,
+    input [15:0] i_wb_adr,
+    input [15:0] i_wb_data,
     input i_ext_clk,
-    input i_DC,
+    input [15:0] i_DC,
     input i_DC_valid,
     output o_wb_ack,
     output o_pwm  
@@ -27,13 +27,13 @@ module top_pwm (
     wire o_irq ;
     //register file signals
     wire wrEN ;
-    wire adr ;
-    wire i_data ;
+    wire [15:0] adr ;
+    wire [15:0] i_data ;
     //regfile registers
     wire [15:0] ctrl_reg = regfile.REG[0] ;
     wire [15:0] divisor_reg = regfile.REG[2];
-    wire [15:0] period_reg = reg_file.REG[4] ;
-    wire [15:0] duty_reg = reg_file.REG[6] ;
+    wire [15:0] period_reg = regfile.REG[4] ;
+    wire [15:0] duty_reg = regfile.REG[6] ;
 
 //internal logic 
 assign chosen_clk = (ctrl_reg[0])? i_ext_clk : i_clk ;
