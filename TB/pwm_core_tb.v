@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module pme_core_tb();
+module pwm_core_tb();
 
 parameter clk_period = 20 ;
 parameter half_clk_period = 10 ;
