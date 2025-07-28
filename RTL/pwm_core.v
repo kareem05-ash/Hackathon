@@ -8,7 +8,8 @@ module pwm_core(
     input [15:0] period_reg ,//reg have the required output clk period
     input [15:0] duty_reg , //reg have the required output clk duty
     input [15:0] i_DC ,    //external duty cycle input
-    output reg o_pwm      //the output modulated clk
+    input i_DC_valid ,    //signal high when a valid duty is input 
+    output reg o_pwm     //the output modulated clk
 );
 //pwm core internal signals
 reg [15:0] pwm_duty ;
@@ -17,12 +18,11 @@ reg [15:0] counter ; //main 16 bit counter
     //duty selection
         always @(*)begin
             //if ctrl bit 6 is set choose external duty
-            if (duty_sel) pwm_duty = i_DC ;
+            if (duty_sel && i_DC_valid) pwm_duty = i_DC ;
             else pwm_duty = duty_reg ;
         end
 
 
- //!the final o_pwm is to be chosen with a mux with ctrl[1] selection
 //modulated duty output clk logic
     always @(posedge clk or posedge rst) begin
         if (rst || !pwm_core_EN) begin  //stay in reset while this mode is not enabled 
