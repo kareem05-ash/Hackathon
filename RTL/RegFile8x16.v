@@ -8,8 +8,8 @@ input [DEPTH-1:0] wrData        //data to be writen to a reg
 
 reg [WIDTH-1:0] REG [DEPTH-1:0] ; //actual stored regs
 integer k;
-always @(posedge clk ,negedge rst)begin
-    if (! rst) begin //set all regs to 0
+always @(posedge clk ,posedge rst)begin
+    if (rst) begin //set all regs to 0
         for ( k = 0 ; k < WIDTH ;k = k + 1)begin 
             REG[k] <= 'b0;
         end
