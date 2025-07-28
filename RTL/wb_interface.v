@@ -21,14 +21,14 @@ module wb_interface#
     input wire i_wb_we,                 //1:write process, 0:read process
     input wire [15:0] i_wb_adr,         //address used for read/write process
     input wire [15:0] i_wb_data,        //input data to be written 
-    input wire [15:0] i_reg_data,       //data from reg_file
+    // input wire [15:0] i_reg_data,       //data from reg_file
     // Outputs
     output reg o_wb_ack,                //indication of process completion (set for one i_wb_clk cycle)
-    output reg [15:0] o_wb_data,        //read data from reg_file during read process
+    // output reg [15:0] o_wb_data,        //read data from reg_file during read process
     output reg [15:0] o_reg_adr,        //address to choose between registers (ctrl, divisor, period, & dc)
     output reg [15:0] o_reg_data,       //data to be written in reg_file
-    output reg o_reg_we,                //write enable to write on reg_file
-    output reg o_reg_re                 //read enable to read data from reg_file
+    output reg o_reg_we                //write enable to write on reg_file
+    // output reg o_reg_re                 //read enable to read data from reg_file
 );
     // Neede internal signals
 
@@ -46,13 +46,13 @@ module wb_interface#
                     o_wb_ack <= 1'b0;
                     o_wb_data <= 16'h0000;
                     o_reg_adr <= 16'h0000;
-                    o_reg_data <= 16'h0000;
+                    // o_reg_data <= 16'h0000;
                     o_reg_we <= 1'b0;
-                    o_reg_re <= 1'b0;
+                    // o_reg_re <= 1'b0;
                 end
             else
                 begin
-                    o_wb_data <= i_reg_data;                //resend data from reg_file to wb_interface to provide the host with it
+                    // o_wb_data <= i_reg_data;                //resend data from reg_file to wb_interface to provide the host with it
                     if(i_wb_cyc && i_wb_stb && adr_valid)
                         begin
                             //address decoding
@@ -60,17 +60,17 @@ module wb_interface#
                             //write operation    
                             if(i_wb_we)     
                                 begin
-                                    o_reg_data <= i_wb_data;
+                                    o_wb_data <= i_wb_data;
                                     o_reg_we <= 1;          //enable write operation
                                     o_wb_ack <= 1;          //indicates complete operation
                                 end
                             //read operation  
-                            else           
-                                begin
-                                    o_reg_data <= i_wb_data;
-                                    o_reg_re <= 1;          //enable read opreration
-                                    o_wb_ack <= 1;          //indicates complete operation
-                                end
+                            // else           
+                            //     begin
+                            //         o_reg_data <= i_wb_data;
+                            //         o_reg_re <= 1;          //enable read opreration
+                            //         o_wb_ack <= 1;          //indicates complete operation
+                            //     end
                         end
                 end
         end 
