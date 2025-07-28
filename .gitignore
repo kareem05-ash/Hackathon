@@ -19,6 +19,9 @@
 *.vstf
 *.err
 *.tcl
+*.mti
+*.mpf
+*wlf
 
 # ========== QuestaSim Work Directory ==========
 work/
