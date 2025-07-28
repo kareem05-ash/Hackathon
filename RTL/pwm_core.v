@@ -25,19 +25,21 @@ reg [15:0] counter ; //main 16 bit counter
  //!the final o_pwm is to be chosen with a mux with ctrl[1] selection
 //modulated duty output clk logic
     always @(posedge clk or posedge rst) begin
-        if (pwm_core_EN) begin             //pwm core enable
-            if (rst) begin 
-                counter <= 16'd0;
-                o_pwm <= 1'b0;
-            end else if(main_counter_EN & o_pwm_EN) begin 
+        if (rst || !pwm_core_EN) begin  //stay in reset while this mode is not enabled 
+            counter <= 16'd0;
+            o_pwm <= 1'b0;
+        end else if(main_counter_EN & o_pwm_EN) begin 
+                    if (pwm_duty < period_reg ) begin
                         if (counter < period_reg)
                             counter <= counter + 1;
                         else
                             counter <= 16'd0;
 
                         o_pwm <= (counter < pwm_duty) ? 1'b1 : 1'b0;
-            end
+                    end
+                    else o_pwm <= clk ;
         end
+        
     end
 
 
