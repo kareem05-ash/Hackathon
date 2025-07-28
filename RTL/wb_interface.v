@@ -4,7 +4,6 @@
 // 01002321067
 // github.com/kareem05-ash
 ///////////////////////////////////////////////////////////
-`timescale 1ns/1ps
 module wb_interface#
 (
     parameter base_adr = 16'h0000,      //base address
