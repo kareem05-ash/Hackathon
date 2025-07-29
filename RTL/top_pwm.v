@@ -17,7 +17,7 @@ module top_pwm (
     //wb signals
     wire o_reg_we ;
     wire o_reg_adr ;
-    wire o_reg_data ;
+    wire o_wb_data ;
     //clk down signals
     wire o_clk ; //input clk for timer and pwm
     wire chosen_clk ;
@@ -53,7 +53,7 @@ wb_interface  wb (
     .i_wb_data(i_wb_data),         
     .o_wb_ack(o_wb_ack),           
     .o_reg_adr(adr),       
-    .o_reg_data(i_data),       
+    .o_wb_data(i_data),       
     .o_reg_we(wrEN)              
 );
 
