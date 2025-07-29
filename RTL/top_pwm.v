@@ -39,7 +39,7 @@ module top_pwm (
 assign chosen_clk = (ctrl_reg[0])? i_ext_clk : i_clk ;
 assign o_pwm = (ctrl_reg[1])? pwm_out : o_irq ;
 assign pwm_rst = i_rst || ctrl_reg[7] ;
-assign timer_core_EN = ctrl_reg[2] & (~ctrl_reg[1]);
+assign timer_core_EN = ctrl_reg[2] & (~ctrl_reg[1]) & (ctrl_reg[4]); //bit2 counter EN ,bit1 timer mode bit4 o_pwm EN
 
 //modules instantiation
 //wb module

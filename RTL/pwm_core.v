@@ -30,7 +30,7 @@ reg [15:0] counter ; //main 16 bit counter
             o_pwm <= 1'b0;
         end else if(main_counter_EN & o_pwm_EN) begin 
                     if (pwm_duty < period_reg ) begin
-                        if (counter < period_reg)
+                        if (counter < period_reg - 1 )
                             counter <= counter + 1;
                         else
                             counter <= 16'd0;

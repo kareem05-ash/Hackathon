@@ -14,7 +14,8 @@ parameter half_clk_period = 10 ;
     reg o_pwm_EN_tb ;          
     reg [15:0] period_reg_tb ;
     reg [15:0] duty_reg_tb ; 
-    reg [15:0] i_DC_tb ;    
+    reg [15:0] i_DC_tb ; 
+    reg i_DC_valid_tb ;   
     wire o_pwm_tb ;
 
 
@@ -28,7 +29,8 @@ parameter half_clk_period = 10 ;
         .o_pwm_EN(o_pwm_EN_tb) ,          
         .period_reg(period_reg_tb) ,
         .duty_reg(duty_reg_tb) , 
-        .i_DC(i_DC_tb) ,    
+        .i_DC(i_DC_tb) , 
+        .i_DC_valid(i_DC_valid_tb),   
         .o_pwm(o_pwm_tb)     
     );
 
@@ -46,7 +48,8 @@ parameter half_clk_period = 10 ;
         pwm_core_EN_tb = 1 ;   //enable pwm 
         main_counter_EN_tb = 1 ; //enable main counter
         o_pwm_EN_tb = 1 ;       //enable output
-        i_DC_tb = 16'd0;    
+        i_DC_tb = 16'd0; 
+        i_DC_valid_tb = 0 ;   
 
         #clk_period rst_tb = 0; // Release reset
 
@@ -65,30 +68,40 @@ parameter half_clk_period = 10 ;
 
         #(500*clk_period);
 
-        //TEST4 USE I_DC
+        //TEST4 Change period and duty cycle
+        period_reg_tb = 16'd10;
+        duty_reg_tb = 16'd5;
+
+        #(500*clk_period);
+
+        //TEST5 USE I_DC
         duty_sel_tb = 1;
+        i_DC_valid_tb = 1;
         i_DC_tb = 16'd60;
         period_reg_tb = 16'd100;
 
         #(500*clk_period);
 
         duty_sel_tb = 0;
+        i_DC_valid_tb = 0 ;
+        
+        
         period_reg_tb = 16'd20;
         duty_reg_tb = 16'd15;
 
-        //TEST5 disable main counter
+        //TEST6 disable main counter
         main_counter_EN_tb = 0;
         #(200*clk_period);
         main_counter_EN_tb = 1;
         #(200*clk_period);
 
-        //TEST6 disable output 
+        //TEST7 disable output 
         o_pwm_EN_tb = 0;
         #(200*clk_period);
         o_pwm_EN_tb = 1;
         #(200*clk_period);  
 
-        //TEST7       
+        //TEST8 disable core 
         pwm_core_EN_tb = 0;
         #(200*clk_period);
 
