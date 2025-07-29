@@ -19,7 +19,7 @@ module timer_core
 
     reg [15:0] count;                       // Internal main counter
     reg [15:0] period_sync;                 // Syncronous poeriod reg
-    reg one_shot = 0;                             // A register for (cont vs one-shot) handling
+    reg one_shot = 0;                       // A register for (cont vs one-shot) handling
 
     // Syncronization of i_period reg
     always@(posedge i_clk)
@@ -37,7 +37,7 @@ module timer_core
             else    
                 begin
                     // highest priority
-                    if(i_irq_clear) 
+                    if(!i_irq_clear) 
                         begin
                             o_irq <= 0;     // dafault value
                             one_shot <= 0;  // to start new time cycle
@@ -55,7 +55,7 @@ module timer_core
                             else
                                 // increment count if < period_sync
                                 count <= count + 1;
-                        end
+                        end       
                 end
         end
 endmodule
