@@ -67,7 +67,7 @@ clock_down down_clk (
 
 //pwm core module 
 pwm_core pwm (
-    .clk(chosen_clk) ,                    
+    .clk(o_clk) ,                    
     .rst(pwm_rst) ,                   
     .duty_sel(ctrl_reg[6]) ,             
     .pwm_core_EN(ctrl_reg[1]) ,        
@@ -82,7 +82,7 @@ pwm_core pwm (
 
 //timer module 
 timer_core timer(
-    .i_clk(chosen_clk),                       
+    .i_clk(o_clk),                       
     .i_rst(pwm_rst),                       
     .i_timer_core_en(timer_core_EN),             
     .i_cont(ctrl_reg[3]),                      
