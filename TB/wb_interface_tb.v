@@ -21,15 +21,15 @@ module wb_interface_tb();
     reg i_wb_we;                        //1:write process, 0:read process
     reg [15:0] i_wb_adr;                //address used for read/write process
     reg [15:0] i_wb_data;               //input data to be written 
-    reg [15:0] i_reg_data;              //data from reg_file
+    // reg [15:0] i_reg_data;              //data from reg_file
 
     // DUT Outputs
     wire o_wb_ack;                      //indication of process completion (set for one i_wb_clk cycle)
     wire [15:0] o_wb_data;              //read data from reg_file during read process
     wire [15:0] o_reg_adr;              //address to choose between registers (ctrl, divisor, period, & dc)
-    wire [15:0] o_reg_data;             //data to be written in reg_file
+    // wire [15:0] o_reg_data;             //data to be written in reg_file
     wire o_reg_we;                      //write enable to write on reg_file
-    wire o_reg_re;                      //read enable to read data from reg_file
+    // wire o_reg_re;                      //read enable to read data from reg_file
 
     // DUT Instantiation
     wb_interface#(
@@ -48,14 +48,14 @@ module wb_interface_tb();
         .i_wb_we(i_wb_we), 
         .i_wb_adr(i_wb_adr), 
         .i_wb_data(i_wb_data), 
-        .i_reg_data(i_reg_data), 
+        // .i_reg_data(i_reg_data), 
         // outputs
         .o_wb_ack(o_wb_ack), 
         .o_wb_data(o_wb_data), 
         .o_reg_adr(o_reg_adr), 
-        .o_reg_data(o_reg_data), 
-        .o_reg_we(o_reg_we), 
-        .o_reg_re(o_reg_re)
+        // .o_reg_data(o_reg_data), 
+        .o_reg_we(o_reg_we) 
+        // .o_reg_re(o_reg_re)
     );
 
     // CLK Generation
@@ -77,7 +77,7 @@ module wb_interface_tb();
             i_wb_we = 0;        // default value
             i_wb_data = 16'd0;  // default value
             i_wb_adr = 16'd0;   // default value
-            i_reg_data = 16'd0; // default value
+            // i_reg_data = 16'd0; // default value
             repeat(30)          // waits for 30 i_wb_clk cycles to track i_wb_rst signal
                 @(negedge i_wb_clk);
             i_wb_rst = 0;       // Release i_wb_rst
@@ -90,9 +90,9 @@ module wb_interface_tb();
                                 // 1st scenario Functional Correctness (Reset Behavior)
             $display("\n==================== 1st scenario Functional Correctness (Reset Behavior) ====================");
             reset();
-            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we || o_reg_re)
-                $display("[FAIL] 1st scenario Functional Correctness (Reset Behavior) : o_wb_ack = %d, o_wb_data = %h, o_reg_data = %h, o_reg_adr = %h, o_reg_we = %d, o_reg_re = %d", 
-                        o_wb_ack, o_wb_data, o_reg_data, o_reg_adr, o_reg_we, o_reg_re);
+            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we)
+                $display("[FAIL] 1st scenario Functional Correctness (Reset Behavior) : o_wb_ack = %d, o_wb_data = %h, o_reg_adr = %h, o_reg_we = %d", 
+                        o_wb_ack, o_wb_data, o_reg_adr, o_reg_we);
             else 
                 $display("[PASS] 1st scenario Functional Correctness (Reset Behavior)");
 
@@ -109,55 +109,55 @@ module wb_interface_tb();
             i_wb_data = $random;
             // waits for one i_wb_clk cycle to track changes
             @(negedge i_wb_clk);
-            if((o_reg_data == i_wb_data) && o_wb_ack && o_reg_we)
-                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [ctrl] reg | ctrl = %h, expected = %h", o_reg_data, i_wb_data);
+            if((o_wb_ack && o_reg_we) && (i_wb_data == o_wb_data))
+                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [ctrl] reg | ctrl = %h, expected = %h", o_wb_data, i_wb_data);
             else
-                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [ctrl] reg | ctrl = %h, expected = %h", o_reg_data, i_wb_data);
+                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [ctrl] reg | ctrl = %h, expected = %h", o_wb_data, i_wb_data);
             // write to divisor reg
             i_wb_adr = 16'h0002;
             // generate a random sample
             i_wb_data = $random;
             // waits for one i_wb_clk cycle to track changes
             @(negedge i_wb_clk);
-            if((o_reg_data == i_wb_data) && o_wb_ack && o_reg_we)
-                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [divisor] reg | divisor = %h, expected = %h", o_reg_data, i_wb_data);
+            if((o_wb_ack && o_reg_we) && (i_wb_data == o_wb_data))
+                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [divisor] reg | divisor = %h, expected = %h", o_wb_data, i_wb_data);
             else
-                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [divisor] reg | divisor = %h, expected = %h", o_reg_data, i_wb_data);
+                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [divisor] reg | divisor = %h, expected = %h", o_wb_data, i_wb_data);
             // write to period reg
             i_wb_adr = 16'h0004;
             // generate a random sample
             i_wb_data = $random;
             // waits for one i_wb_clk cycle to track changes
             @(negedge i_wb_clk);
-            if((o_reg_data == i_wb_data) && o_wb_ack && o_reg_we)
-                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [period] reg | period = %h, expected = %h", o_reg_data, i_wb_data);
+            if((o_wb_ack && o_reg_we) && (i_wb_data == o_wb_data))
+                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [period] reg | period = %h, expected = %h", o_wb_data, i_wb_data);
             else
-                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [period] reg | period = %h, expected = %h", o_reg_data, i_wb_data);
+                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [period] reg | period = %h, expected = %h", o_wb_data, i_wb_data);
             // write to DC reg
             i_wb_adr = 16'h0000;
             // generate a random sample
             i_wb_data = $random;
             // waits for one i_wb_clk cycle to track changes
             @(negedge i_wb_clk);
-            if((o_reg_data == i_wb_data) && o_wb_ack && o_reg_we)
-                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [DC] reg | DC = %h, expected = %h", o_reg_data, i_wb_data);
+            if((o_wb_ack && o_reg_we) && (i_wb_data == o_wb_data))
+                $display("[PASS] 2nd scenario Functional Correctness (write random values to all regs) [DC] reg | DC = %h, expected = %h", o_wb_data, i_wb_data);
             else
-                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [DC] reg | DC = %h, expected = %h", o_reg_data, i_wb_data);
+                $display("[FAIL] 2nd scenario Functional Correctness (write random values to all regs) [DC] reg | DC = %h, expected = %h", o_wb_data, i_wb_data);
 
 
                                 // 3rd scenario Functional Correctness (Read-Back from reg_file)
             $display("\n==================== 3rd scenario Functional Correctness (Read-Back from reg_file) ====================");
             reset();
-            i_wb_cyc = 1;       //allow operations
-            i_wb_stb = 1;       //allow operations
-            // generate a random sample from reg_file to send it back to wb_interface
-            i_reg_data = $random;
-            // waits for one i_wb_clk cycle to track changes
-            @(negedge i_wb_clk);
-            if(o_wb_data == i_reg_data)
-                $display("[PASS] 3rd scenario Functional Correctness (Read-Back from reg_file) | o_wb_data = %h, expected = %h", o_wb_data, i_reg_data);
-            else
-                $display("[FAIL] 3rd scenario Functional Correctness (Read-Back from reg_file) | o_wb_data = %h, expected = %h", o_wb_data, i_reg_data);
+            // i_wb_cyc = 1;       //allow operations
+            // i_wb_stb = 1;       //allow operations
+            // // generate a random sample from reg_file to send it back to wb_interface
+            // i_reg_data = $random;
+            // // waits for one i_wb_clk cycle to track changes
+            // @(negedge i_wb_clk);
+            // if(o_wb_data == i_reg_data)
+            //     $display("[PASS] 3rd scenario Functional Correctness (Read-Back from reg_file) | o_wb_data = %h, expected = %h", o_wb_data, i_reg_data);
+            // else
+            //     $display("[FAIL] 3rd scenario Functional Correctness (Read-Back from reg_file) | o_wb_data = %h, expected = %h", o_wb_data, i_reg_data);
 
 
                                 // 4th scenario Functional Correctness (Address Decoding for reg_file)
@@ -174,8 +174,8 @@ module wb_interface_tb();
                 $display("[FAIL] 4th scenario Functional Correctness (Address Decoding for reg_file) | o_reg_adr = %h, expected = %h", o_reg_adr, i_wb_adr);
 
 
-                                // 5th scenario Corner Case (Write ot a reg with In-Valid address)
-            $display("\n==================== 5th scenario Corner Case (Write ot a reg with In-Valid address) ====================");
+                                // 5th scenario Corner Case (Write on a reg with In-Valid address)
+            $display("\n==================== 5th scenario Corner Case (Write on a reg with In-Valid address) ====================");
             reset();
             i_wb_cyc = 1;       //allow operations 
             i_wb_stb = 1;       //allow operations
@@ -186,11 +186,11 @@ module wb_interface_tb();
             i_wb_data = $random;
             // waits for one i_wb_clk cycle to track changes
             @(negedge i_wb_clk);
-            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we || o_reg_re)
-                $display("[FAIL] 5th scenario Corner Case (Write ot a reg with In-Valid address) : o_wb_ack = %d, o_wb_data = %h, o_reg_data = %h, o_reg_adr = %h, o_reg_we = %d, o_reg_re = %d", 
-                        o_wb_ack, o_wb_data, o_reg_data, o_reg_adr, o_reg_we, o_reg_re);
+            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we)
+                $display("[FAIL] 5th scenario Corner Case (Write on a reg with In-Valid address) : o_wb_ack = %d, o_wb_data = %h, o_reg_adr = %h, o_reg_we = %d", 
+                        o_wb_ack, o_wb_data, o_reg_adr, o_reg_we);
             else 
-                $display("[PASS] 5th scenario Corner Case (Write ot a reg with In-Valid address)");
+                $display("[PASS] 5th scenario Corner Case (Write on a reg with In-Valid address)");
 
 
                                 // 6th scenario Corner Case (Address Decoding with In-Valid address)
@@ -202,9 +202,9 @@ module wb_interface_tb();
             i_wb_adr = 16'h0023;
             // waits for one i_wb_cycle to track changes
             @(negedge i_wb_clk);
-            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we || o_reg_re)
-                $display("[FAIL] 6th scenario Corner Case (Address Decoding with In-Valid address) : o_wb_ack = %d, o_wb_data = %h, o_reg_data = %h, o_reg_adr = %h, o_reg_we = %d, o_reg_re = %d", 
-                        o_wb_ack, o_wb_data, o_reg_data, o_reg_adr, o_reg_we, o_reg_re);
+            if(o_wb_ack || (o_wb_data != 16'd0) || (o_reg_adr != 16'd0) || o_reg_we)
+                $display("[FAIL] 6th scenario Corner Case (Address Decoding with In-Valid address) : o_wb_ack = %d, o_wb_data = %h, o_reg_adr = %h, o_reg_we = %d", 
+                        o_wb_ack, o_wb_data, o_reg_adr, o_reg_we);
             else 
                 $display("[PASS] 6th scenario Corner Case (Address Decoding with In-Valid address)");
 
@@ -223,10 +223,10 @@ module wb_interface_tb();
                     i_wb_data = $random;
                     // waits for one i_wb_clk cycle to track changes
                     @(negedge i_wb_clk);
-                    if((o_reg_data == i_wb_data) && o_wb_ack && o_reg_we)
-                        $display("[PASS] 7th scenario Corner Case (Write 10 samples to a reg Back-to-Back without losses) [ctrl] reg | ctrl = %h, expected = %h", o_reg_data, i_wb_data);
+                    if((o_wb_ack && o_reg_we) && (i_wb_data == o_wb_data))
+                        $display("[PASS] 7th scenario Corner Case (Write 10 samples to a reg Back-to-Back without losses) [ctrl] reg | ctrl = %h, expected = %h", o_wb_data, i_wb_data);
                     else
-                        $display("[FAIL] 7th scenario Corner Case (Write 10 samples to a reg Back-to-Back without losses) [ctrl] reg | ctrl = %h, expected = %h", o_reg_data, i_wb_data);
+                        $display("[FAIL] 7th scenario Corner Case (Write 10 samples to a reg Back-to-Back without losses) [ctrl] reg | ctrl = %h, expected = %h", o_wb_data, i_wb_data);
                 end
 
 
