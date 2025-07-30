@@ -1,7 +1,7 @@
 ####################################################
 # Kareem Ashraf Mostafa
 # kareem.ash05@gmail.com
-# 01002321067
+# +201002321067
 # github.com/kareem05-ash
 ####################################################
 # ========== Simulation Artifacts ==========
@@ -58,7 +58,7 @@ wlf*
 *.old
 *.DS_Store
 *.pptx
-# *.pdf
+*.pdf
 Thumbs.do
 
 # ========== Misc Output ==========
