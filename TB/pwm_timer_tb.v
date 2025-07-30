@@ -109,24 +109,39 @@ module pwm_timer_tb();
                 $display("[FAIL] 2nd scenario Functional Correctness (PWM output (Period, DC)) | o_pwm = %d, expected = 1", o_pwm);
             repeat(80) // waits for DC
                 @(negedge i_clk);
-        
+
+            //i_DC input with DC 25%
+            reset();
+            i_wb_cyc = 1;               // enable process
+            i_wb_stb = 1;               // enable process
+            i_wb_we = 1;                // enable process
+            repeat(4) 
+                @(negedge i_clk);
+            i_wb_adr = 16'd4;           // choose period reg
+            i_wb_data = 16'd8;          // 
+            @(negedge i_clk);   
+            i_DC_valid = 1 ;
+            i_DC = 16'd2 ;
+            @(negedge i_clk);      
+            i_wb_adr = 16'd0;           // choose ctrl reg
+            i_wb_data = 16'b0101_0111;  // choose wanted mode  //i_ext_clk & pwm mode & counter EN & o_pwm EN & external duty
+            repeat(200) // waits and watch wave form
+                @(negedge i_clk);
+
+
         // 3rd scenario Functional Correctness (Timer Mode interrupts [cont])
             $display("\n==================== 3rd scenario Functional Correctness (Timer Mode interrupts [cont]) ====================");
             reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
-            i_wb_adr = 16'd0;           // choose ctrl reg
-            i_wb_data = 16'b0011_1100;  // choose wanted mode (cont) //i_clk & timer mode & counter EN & cont & o_pwm EN 
-            @(negedge i_clk);
             i_wb_adr = 16'd4;           // choose period reg
             i_wb_data = 16'd8;          // 
+            @(negedge i_clk);
+            i_wb_adr = 16'd0;           // choose ctrl reg
+            i_wb_data = 16'b0011_1100;  // choose wanted mode (cont) //i_clk & timer mode & counter EN & cont & o_pwm EN 
             repeat(20)                   // wait and watch counter keeps incrementing
             @(negedge i_clk);
-            // if(o_pwm)
-            //     $display("[FAIL] 3rd scenario Functional Correctness (Timer Mode interrupts [cont]) : before counter reachs period (8) | o_pwm = %d, expected = 0", o_pwm);
-            // else
-            //     $display("[PASS] 3rd scenario Functional Correctness (Timer Mode interrupts [cont]) : before counter reachs period (8)");
             repeat(12)                   // waits counter to reach period
                 @(negedge i_clk);
             if(o_pwm)
@@ -147,11 +162,11 @@ module pwm_timer_tb();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
-            i_wb_adr = 16'd0;           // choose ctrl reg
-            i_wb_data = 16'b0011_0100;  // choose wanted mode //i_clk , timer mode , counter EN , one shot , o_pwm EN 
-            @(negedge i_clk);
             i_wb_adr = 16'd4;           // choose period reg
             i_wb_data = 16'd6;          // 
+            @(negedge i_clk);
+            i_wb_adr = 16'd0;           // choose ctrl reg
+            i_wb_data = 16'b0011_0100;  // choose wanted mode //i_clk , timer mode , counter EN , one shot , o_pwm EN 
             @(negedge i_clk);
             if(o_pwm)
                 $display("[FAIL] 4th scenario Functional Correctness (Timer Mode interrupts [one-shot]) : before counter reachs period (8) | o_pwm = %d, expected = 0", o_pwm);
@@ -192,16 +207,17 @@ module pwm_timer_tb();
                 $display("[PASS] 5th scenaroi Functional Correctness (Down Clocking (divisor = 2)) : low level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
             else    
                 $display("[FAIL] 5th scenaroi Functional Correctness (Down Clocking (divisor = 2)) : low level half-cycle | o_slow_clk = %d, expected = 0", DUT.down_clk.o_slow_clk);
+            repeat(20)                   // wait and watch wave form
+                @(negedge i_clk);
 
-
-                                // 6th scenaroi Functional Correctness (Down Clocking (divisor = 10))
+        // 6th scenaroi Functional Correctness (Down Clocking (divisor = 10))
             $display("\n==================== 6th scenaroi Functional Correctness (Down Clocking (divisor = 10)) ====================");
             reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
             i_wb_adr = 16'd2;           // choose divisor reg
-            i_wb_data = 16'd2;          // choose wanted mode (cont)
+            i_wb_data = 16'd10;          // choose wanted mode (cont)
             @(negedge i_clk);           // waits to track changes 
             @(negedge i_clk);
             repeat(10/2)         //now, o_slow_clk should be 1 
@@ -216,43 +232,88 @@ module pwm_timer_tb();
                 $display("[PASS] 6th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
             else    
                 $display("[FAIL] 6th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 0", DUT.down_clk.o_slow_clk);
-                            
+            repeat(200) // waits and watch wave form
+                @(negedge i_clk);   
 
-                                // 7th scenario Optional Feature (DC > period handling)
-            $display("\n==================== 7th scenario Optional Feature (DC > period handling) ====================");
+        // 7th scenaroi Functional Correctness (Down Clocking (divisor = 0))
+            $display("\n==================== 7th scenaroi Functional Correctness (Down Clocking (divisor = 10)) ====================");
             reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
-            i_wb_adr = 16'd0;           // choose ctrl reg
-            i_wb_data = 16'b0001_0110;  // period = 2
+            i_wb_adr = 16'd2;           // choose divisor reg
+            i_wb_data = 16'd0;          // 
             @(negedge i_clk);           // waits to track changes 
             @(negedge i_clk);
+            repeat(10/2)         //now, o_slow_clk should be 1 
+                @(negedge i_clk);
+            if(DUT.down_clk.o_slow_clk)
+                $display("[PASS] 7th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : high level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            else    
+                $display("[FAIL] 7th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : high level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            repeat(10/2)         //now, o_slow_clk should be 0
+                @(negedge i_clk);
+            if(!DUT.down_clk.o_slow_clk)
+                $display("[PASS] 7th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            else    
+                $display("[FAIL] 7th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 0", DUT.down_clk.o_slow_clk);
+            repeat(200) // waits and watch wave form
+                @(negedge i_clk); 
+
+        // 8th scenaroi Functional Correctness (Down Clocking (divisor = 1))
+            $display("\n==================== 8th scenaroi Functional Correctness (Down Clocking (divisor = 10)) ====================");
+            reset();
+            i_wb_cyc = 1;               // enable process
+            i_wb_stb = 1;               // enable process
+            i_wb_we = 1;                // enable process
+            i_wb_adr = 16'd2;           // choose divisor reg
+            i_wb_data = 16'd1;          // choose wanted mode (cont)
+            @(negedge i_clk);           // waits to track changes 
+            @(negedge i_clk);
+            repeat(10/2)         //now, o_slow_clk should be 1 
+                @(negedge i_clk);
+            if(DUT.down_clk.o_slow_clk)
+                $display("[PASS] 8th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : high level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            else    
+                $display("[FAIL] 8th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : high level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            repeat(10/2)         //now, o_slow_clk should be 0
+                @(negedge i_clk);
+            if(!DUT.down_clk.o_slow_clk)
+                $display("[PASS] 8th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 1", DUT.down_clk.o_slow_clk);
+            else    
+                $display("[FAIL] 8th scenaroi Functional Correctness (Down Clocking (divisor = 10)) : low level half-cycle | o_slow_clk = %d, expected = 0", DUT.down_clk.o_slow_clk);
+            repeat(200) // waits and watch wave form
+                @(negedge i_clk);                               
+
+        // 9th scenario Optional Feature (DC > period handling)
+            $display("\n==================== 9th scenario Optional Feature (DC > period handling) ====================");
+            reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
             i_wb_adr = 16'd4;           // choose period reg
             i_wb_data = 16'd2;          // period = 2
             @(negedge i_clk);           // waits to track changes 
-            @(negedge i_clk);
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
             i_wb_we = 1;                // enable process
-            i_wb_adr = 16'd2;           // choose DC reg
+            i_wb_adr = 16'd6;           // choose DC reg
             i_wb_data = 16'd4;          // choose wanted mode (cont)
             @(negedge i_clk);           // DC = 4
-            @(negedge i_clk);           // waits to track changes 
             repeat(5) begin
+            i_wb_adr = 16'd0;           // choose ctrl reg
+            i_wb_data = 16'b0001_0110;  // 
+            @(negedge i_clk);           // waits to track changes 
                 @(negedge DUT.o_clk);
                 if(o_pwm == DUT.o_clk)
-                    $display("[PASS] 7th scenario Optional Feature (DC > period handling) ");
+                    $display("[PASS] 9th scenario Optional Feature (DC > period handling) ");
                 else
-                    $display("[FAIL] 7th scenario Optional Feature (DC > period handling) | o_pwm = %d, expected = %d", DUT.pwm_out, DUT.o_clk);
+                    $display("[FAIL] 9th scenario Optional Feature (DC > period handling) | o_pwm = %d, expected = %d", DUT.pwm_out, DUT.o_clk);
             end
 
 
-                                // 8th scenario Functional Correctness (WB Read)
-            $display("\n==================== 8th scenario Functional Correctness (WB Read) ====================");
+        // 10th scenario Functional Correctness (WB Read)
+            $display("\n==================== 10th scenario Functional Correctness (WB Read) ====================");
             reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
@@ -262,13 +323,13 @@ module pwm_timer_tb();
             @(negedge i_clk);           // waits to track changes 
             @(negedge i_clk);
             if(DUT.i_data == DUT.i_wb_data)
-                $display("[PASS] 8th scenario Functional Correctness (WB Read)");
+                $display("[PASS] 10th scenario Functional Correctness (WB Read)");
             else
-                $display("[FAIL] 8th scenario Functional Correctness (WB Read) | o_wb_data = %h, expected = %h", DUT.i_data, DUT.i_wb_data);
+                $display("[FAIL] 10th scenario Functional Correctness (WB Read) | o_wb_data = %h, expected = %h", DUT.i_data, DUT.i_wb_data);
 
 
-                                // 9th scenario Functional Correctness (WB Write to reg_file [ctrl])
-            $display("\n==================== 9th scenario Functional Correctness (WB Write to reg_file [ctrl]) ====================");
+            // 11th scenario Functional Correctness (WB Write to reg_file [ctrl])
+            $display("\n==================== 11th scenario Functional Correctness (WB Write to reg_file [ctrl]) ====================");
             reset();
             i_wb_cyc = 1;               // enable process
             i_wb_stb = 1;               // enable process
@@ -278,11 +339,13 @@ module pwm_timer_tb();
             @(negedge i_clk);           // waits to track changes 
             @(negedge i_clk);
             if(DUT.ctrl_reg == DUT.i_wb_data)
-                $display("[PASS] 9th scenario Functional Correctness (WB Write to reg_file [ctrl])");
+                $display("[PASS] 11th scenario Functional Correctness (WB Write to reg_file [ctrl])");
             else
-                $display("[FAIL] 9th scenario Functional Correctness (WB Write to reg_file [ctrl]) | ctrl_reg = %h, expected = %h", DUT.ctrl_reg, DUT.i_wb_data);
+                $display("[FAIL] 11th scenario Functional Correctness (WB Write to reg_file [ctrl]) | ctrl_reg = %h, expected = %h", DUT.ctrl_reg, DUT.i_wb_data);
+            i_wb_data = 16'h0;         
 
-                                // STOP Simulation
+
+        // STOP Simulation
             $display("\n==================== STOP Simulation ====================");
             // reset();
             #100; 
