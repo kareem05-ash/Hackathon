@@ -1,8 +1,8 @@
 `timescale 1ns/1ps
 module RegFile8x16_tb;
     // DUT Parameters
-        parameter WIDTH = 8;
-        parameter DEPTH = 16;
+        parameter WIDTH = 16;
+        parameter DEPTH = 8;
         parameter addressbits = 16; 
     // Needed Parameters
         parameter clk_period = 10;          // to maintain 50 MHZ clk frequency
@@ -80,18 +80,18 @@ module RegFile8x16_tb;
                 $display("\n==================== 3rd scenario : Functional Correctness (Reset just after Write operation) ====================");
                 reset();    
                 wrEN = 1;           // enables write operation
-                address = 10;       // choose REG[5] to write in it 
-                wrData = 16'h23;    // write hex(23) to REG[10]
+                address = 7;        // choose REG[7] to write in it 
+                wrData = 16'h23;    // write hex(23) to REG[7]
                 @(negedge clk);     // waits for a clc cycle to track singals
                 reset();            // reset just after write operation to test bahavior
-                if(DUT.REG [10] == 0) begin
+                if(DUT.REG [7] == 0) begin
                     succeeded_cases = succeeded_cases + 1;      // acother test case passes
-                    $display("[PASS] 3rd scenario : Functional Correctness (Reset just after Write operation) | REG [10] = %d, expected = %d", 
-                            DUT.REG [10], wrData);
+                    $display("[PASS] 3rd scenario : Functional Correctness (Reset just after Write operation) | REG [7] = %d, expected = %d", 
+                            DUT.REG [7], wrData);
                 end
                 else begin
-                    $display("[FAIL] 3rd scenario : Functional Correctness (Reset just after Write operation) | REG [10] = %d, expected = %d", 
-                            DUT.REG [10], wrData);
+                    $display("[FAIL] 3rd scenario : Functional Correctness (Reset just after Write operation) | REG [7] = %d, expected = %d", 
+                            DUT.REG [7], wrData);
                 end
 
             // 4th scenario : Corner Case (Write to the same REG 2 times [check overwrite])
@@ -139,17 +139,17 @@ module RegFile8x16_tb;
                 $display("\n==================== 6th scenario : Corner Case (Write 00 to the last REG) ====================");
                 reset(); 
                 wrEN = 1;           // enables write operation
-                address = DEPTH;    // choose REG[DEPTH] to write in it 
-                wrData = 16'h00;    // write hex(00) to REG[DEPTH]
+                address = DEPTH-1;  // choose REG[DEPTH-1] to write in it 
+                wrData = 16'h00;    // write hex(00) to REG[DEPTH-1]
                 @(negedge clk);     // waits for a clc cycle to track singals
-                if(DUT.REG [0] == 16'h00) begin
+                if(DUT.REG [DEPTH-1] == 16'h00) begin
                     succeeded_cases = succeeded_cases + 1;      // acother test case passes
-                    $display("[PASS] 6th scenario : Corner Case (Write 00 to the last REG) | REG [0] = %d, expected = %d", 
-                            DUT.REG [0], wrData);
+                    $display("[PASS] 6th scenario : Corner Case (Write 00 to the last REG) | REG [%d-1] = %d, expected = %d", 
+                            DEPTH, DUT.REG [DEPTH-1], wrData);
                 end
                 else begin
-                    $display("[FAIL] 6th scenario : Corner Case (Write 00 to the last REG) | REG [0] = %d, expected = %d", 
-                            DUT.REG [0], wrData);
+                    $display("[FAIL] 6th scenario : Corner Case (Write 00 to the last REG) | REG [%d-1] = %d, expected = %d", 
+                            DEPTH, DUT.REG [DEPTH-1], wrData);
                 end
             // STOP Simulation
                 $display("\n==================== Finish Simulation ====================");
