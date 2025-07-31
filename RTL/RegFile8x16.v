@@ -1,8 +1,8 @@
 
 module RegFile8x16 #
 (   // Parameters
-    parameter WIDTH = 8,
-    parameter DEPTH = 16,
+    parameter WIDTH = 16,
+    parameter DEPTH = 8,
     parameter addressbits = 16 
 )
 (   // Inputs
