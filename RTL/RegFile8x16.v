@@ -10,7 +10,7 @@ module RegFile8x16 #
     input rst,                          //active low rst to reset all regs to 0
     input wrEN,                         //signal to write to a specified reg
     input [addressbits-1:0] address,    //address of the desired reg
-    input [DEPTH-1:0] wrData            //data to be writen to a reg
+    input [WIDTH-1:0] wrData            //data to be writen to a reg
 );
 
     reg [WIDTH-1:0] REG [DEPTH-1:0] ;       //actual stored regs
