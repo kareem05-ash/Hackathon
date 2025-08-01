@@ -7,7 +7,7 @@
 - [Purpose of This File](#-purpose-of-this-file)
 - [Design Overview](#-design-overview)
 - [Elaborated Design Diagram](#-elaborated-design-diagram)
-- [Top-Level Interface Signals](#-toplevel-interface-signals)
+- [Top Level Interface Signals](#-top-level-interface-signals)
 - [Intrenal Module Interfaces](#-intrenal-module-interfaces)
     1. [wb_interface](#1-wb_interface)
     2. [RegFile8x16](#2-regfile8x16)
@@ -40,7 +40,7 @@ Below is the block diagram of the design, as generated during elaboration:
 
 ---     
 
-## 🔌 Top-Level Interface Signals      
+## 🔌 Top Level Interface Signals      
 
 | **Signal Name**   | **Direction** | **Width** | **Description**                                               |
 |-------------------|---------------|-----------|---------------------------------------------------------------|
