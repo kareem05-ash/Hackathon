@@ -49,6 +49,9 @@ wlf*
 *.srcs/
 *.vivado.jou
 *.vivado.log
+*.xpr
+*.sim/
+
 
 # ========== General temp & OS Files ==========
 *.tmp
