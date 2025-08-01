@@ -15,7 +15,7 @@
     4. [pwm_core](#4-pwm_core)
     5. [timer_core](#5-timer_core)
 - [Signal Connectivity Summary](#-signal-connectivity-summary)
-- [Control Register Specs](#-control-register-specs)
+- [Control Register Specs](#-control-register-specs) 
 
 
 ---     
