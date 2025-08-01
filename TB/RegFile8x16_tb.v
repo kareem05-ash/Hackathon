@@ -11,7 +11,7 @@ module RegFile8x16_tb;
         reg rst;                            //active low rst to reset all regs to 0
         reg wrEN;                           //signal to write to a specified reg
         reg [addressbits-1:0] address;      //address of the desired reg
-        reg [DEPTH-1:0] wrData;             //data to be writen to a reg
+        reg [WIDTH-1:0] wrData;             //data to be writen to a reg
     // Needed Signals
         integer i;                          // needed for loops
         integer succeeded_cases = 0;        // to count succeeded test cases
@@ -118,38 +118,38 @@ module RegFile8x16_tb;
                             DUT.REG [0], wrData);
                 end
 
-            // 5th scenario : Corner Case (Write FF to the last REG)
-                $display("\n==================== 5th scenario : Corner Case (Write FF to the last REG) ====================");
+            // 5th scenario : Corner Case (Write FFFF to the last REG)
+                $display("\n==================== 5th scenario : Corner Case (Write FFFF to the last REG) ====================");
                 reset(); 
                 wrEN = 1;           // enables write operation
                 address = DEPTH-1;  // choose REG[DEPTH-1] to write in it 
-                wrData = 16'hFF;    // write hex(FF) to REG[DEPTH-1]
+                wrData = 16'hFFFF;  // write hex(FFFF) to REG[DEPTH-1]
                 @(negedge clk);     // waits for a clc cycle to track singals
-                if(DUT.REG [DEPTH-1] == 16'hFF) begin
+                if(DUT.REG [DEPTH-1] == 16'hFFFF) begin
                     succeeded_cases = succeeded_cases + 1;      // acother test case passes
-                    $display("[PASS] 5th scenario : Corner Case (Write FF to the last REG) | REG [%d-1] = %d, expected = %d", 
-                            DEPTH, DUT.REG [DEPTH-1], wrData);
+                    $display("[PASS] 5th scenario : Corner Case (Write FFFF to the last REG) | REG [%d] = %d, expected = %d", 
+                            DEPTH-1, DUT.REG [DEPTH-1], wrData);
                 end
                 else begin
-                    $display("[FAIL] 5th scenario : Corner Case (Write FF to the last REG) | REG [%d-1] = %d, expected = %d", 
-                            DEPTH, DUT.REG [DEPTH-1], wrData);
+                    $display("[FAIL] 5th scenario : Corner Case (Write FFFF to the last REG) | REG [%d] = %d, expected = %d", 
+                            DEPTH-1, DUT.REG [DEPTH-1], wrData);
                 end
 
-            // 6th scenario : Corner Case (Write 00 to the last REG)
-                $display("\n==================== 6th scenario : Corner Case (Write 00 to the last REG) ====================");
+            // 6th scenario : Corner Case (Write 0000 to the last REG)
+                $display("\n==================== 6th scenario : Corner Case (Write 0000 to the last REG) ====================");
                 reset(); 
                 wrEN = 1;           // enables write operation
                 address = DEPTH-1;  // choose REG[DEPTH-1] to write in it 
-                wrData = 16'h00;    // write hex(00) to REG[DEPTH-1]
+                wrData = 16'h0000;  // write hex(0000) to REG[DEPTH-1]
                 @(negedge clk);     // waits for a clc cycle to track singals
-                if(DUT.REG [DEPTH-1] == 16'h00) begin
+                if(DUT.REG [DEPTH-1] == 16'h0000) begin
                     succeeded_cases = succeeded_cases + 1;      // acother test case passes
-                    $display("[PASS] 6th scenario : Corner Case (Write 00 to the last REG) | REG [%d-1] = %d, expected = %d", 
-                            DEPTH, DUT.REG [DEPTH-1], wrData);
+                    $display("[PASS] 6th scenario : Corner Case (Write 0000 to the last REG) | REG [%d] = %d, expected = %d", 
+                            DEPTH-1, DUT.REG [DEPTH-1], wrData);
                 end
                 else begin
-                    $display("[FAIL] 6th scenario : Corner Case (Write 00 to the last REG) | REG [%d-1] = %d, expected = %d", 
-                            DEPTH, DUT.REG [DEPTH-1], wrData);
+                    $display("[FAIL] 6th scenario : Corner Case (Write 0000 to the last REG) | REG [%d] = %d, expected = %d", 
+                            DEPTH-1, DUT.REG [DEPTH-1], wrData);
                 end
             // STOP Simulation
                 $display("\n==================== Finish Simulation ====================");
