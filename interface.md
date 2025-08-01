@@ -2,6 +2,24 @@
 
 ---      
 
+## Table of Contents (TOC)  
+
+- [Purpose of This File](#-purpose-of-this-file)
+- [Design Overview](#-design-overview)
+- [Elaborated Design Diagram](#-elaborated-design-diagram)
+- [Top-Level Interface Signals](#-toplevel-interface-signals)
+- [Intrenal Module Interfaces](#-intrenal-module-interfaces)
+    1. [wb_interface](#1-wb_interface)
+    2. [RegFile8x16](#2-regfile8x16)
+    3. [clock_down](#3-clock_down)
+    4. [pwm_core](#4-pwm_core)
+    5. [timer_core](#5-timer_core)
+- [Signal Connectivity Summary](#-signal-connectivity-summary)
+- [Control Register Specs](#-control-register-specs)
+
+
+---     
+
 ## 📄 Purpose of This File     
 
 This document describes the external and internal intreface signals used in the design. It aims to clarify each signal's role, direction, and connectivity to ensure maintainability, and easier integration or debugging.  
@@ -41,7 +59,7 @@ Below is the block diagram of the design, as generated during elaboration:
 
 ---     
 
-## 🧩 Intrenal Modules Interfaces   
+## 🧩 Intrenal Module Interfaces   
 
 ### 1. wb_interface         
 
@@ -138,3 +156,16 @@ Below is the block diagram of the design, as generated during elaboration:
 | RegFile8x16 (internal)| REG [04] == period        | timer_core                | i_period                      | 
 
 ---         
+
+## Control Register Specs
+
+| **ctrl[?]**   | **Description**                                                                               |   
+|---------------|-----------------------------------------------------------------------------------------------|
+| ctrl[0]       | If set, **i_ext_clk** will be chosen to be down clocked. Else, **i_wb_clk** will be chosen.   |  
+| ctrl[1]       | If set, **o_pwm** will be chosen from **pwm_core** module. Else, from **timer_core**.         |
+| ctrl[2]       | If set, *main counter* in **pwm_core** & **timer_core** starts. Else, stops.                  | 
+| ctrl[3]       | If set, **timer_core** runs *continuously*. Else, **timer_core** runs for *one-shot*.         |       
+| ctrl[4]       | If set, the modulated output will be outputed on **o_pwm**.                                   |
+| ctrl[5]       | If reset, **irq_clear** signal is generated to stop *continouts* mode on **timer_core**.      |
+| ctrl[6]       | If set, **i_DC** is chosen for **pwm_core**. Else, **duty_reg** is chosen.                    |
+| ctrl[7]       | If set, resets the main counter, **o_pwm**, and ctrl [5]. Acts as reset signal.               | 
